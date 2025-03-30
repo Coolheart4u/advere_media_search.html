@@ -1,53 +1,79 @@
-function searchOSINT() {
-    let name = document.getElementById("subjectName").value.trim();
-    if (name === "") {
-        alert("Please enter a name to search.");
-        return;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Compliance Investigation Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .report {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            display: none;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>OSINT Compliance Investigation Tool</h2>
+    <p>Enter the name of a subject to search for adverse media and compliance risks.</p>
+    
+    <input type="text" id="subjectName" placeholder="Enter full name">
+    <button onclick="performSearch()">Search</button>
 
-    let queries = [
-        { site: "Google News", url: `https://www.google.com/search?q=${name}+fraud+OR+money+laundering&tbm=nws` },
-        { site: "Bing News", url: `https://www.bing.com/news/search?q=${name}+fraud+OR+money+laundering` },
-        { site: "DuckDuckGo", url: `https://duckduckgo.com/?q=${name}+fraud+money+laundering` },
-        { site: "OFAC Sanctions", url: `https://sanctionssearch.ofac.treas.gov/` },
-        { site: "EU Sanctions Map", url: `https://www.sanctionsmap.eu/` },
-        { site: "UK Sanctions List", url: `https://www.gov.uk/government/publications/the-uk-sanctions-list` },
-        { site: "OpenSanctions", url: `https://www.opensanctions.org/search/?q=${name}` },
-        { site: "Interpol Red Notices", url: `https://www.interpol.int/en/How-we-work/Notices/View-Red-Notices` },
-        { site: "OpenCorporates", url: `https://opencorporates.com/search?q=${name}` },
-        { site: "Offshore Leaks Database", url: `https://offshoreleaks.icij.org/search?q=${name}` },
-        { site: "North Data (Company Registry)", url: `https://www.northdata.com/${name}` },
-        { site: "SEC EDGAR Filings", url: `https://www.sec.gov/edgar/searchedgar/companysearch.html` },
-        { site: "Justice.gov DOJ Cases", url: `https://www.justice.gov/news` },
-        { site: "AMLBot Crypto Check", url: `https://amlbot.com/en` }
-    ];
+    <div id="report" class="report"></div>
 
-    // Open each OSINT source in a new tab
-    queries.forEach(q => window.open(q.url, '_blank'));
+    <script>
+        function performSearch() {
+            let name = document.getElementById("subjectName").value.trim();
+            if (name === "") {
+                alert("Please enter a name.");
+                return;
+            }
 
-    // Generate report
-    document.getElementById("report").innerHTML = `
-        <h2>Risk Report for ${name}</h2>
-        <p>Searches have been conducted across multiple compliance and investigative sources.</p>
-        <h3>Next Steps:</h3>
-        <ul>
-            <li>Review sanctions lists for any direct matches.</li>
-            <li>Analyze news reports for fraud or financial crime allegations.</li>
-            <li>Check corporate databases for hidden connections.</li>
-            <li>Monitor for any legal or regulatory actions.</li>
-            <li>Use enhanced due diligence (EDD) if necessary.</li>
-        </ul>
-    `;
-}
+            // Open multiple OSINT sources for investigation
+            let googleSearch = `https://www.google.com/search?q=${name}+fraud+OR+"money+laundering"+OR+scandal+OR+"criminal+charges"`;
+            let openSanctions = `https://www.opensanctions.org/search/?q=${name}`;
+            let offshoreLeaks = `https://offshoreleaks.icij.org/search?q=${name}`;
+            let northData = `https://www.northdata.com/${name.replace(" ", "+")}`;
 
-// HTML Form for input
-const osintForm = `
-    <div>
-        <h2>OSINT Adverse Media & Compliance Search</h2>
-        <input type="text" id="subjectName" placeholder="Enter name to search">
-        <button onclick="searchOSINT()">Search</button>
-        <div id="report"></div>
-    </div>
-`;
+            window.open(googleSearch, "_blank");
+            window.open(openSanctions, "_blank");
+            window.open(offshoreLeaks, "_blank");
+            window.open(northData, "_blank");
 
-document.body.innerHTML = osintForm;
+            // Generate Report
+            let report = `
+                <h3>Investigation Report for ${name}</h3>
+                <p><strong>Sources Checked:</strong></p>
+                <ul>
+                    <li>Google Adverse Media Search</li>
+                    <li>OpenSanctions Database</li>
+                    <li>Offshore Leaks Database</li>
+                    <li>North Data (Company Information)</li>
+                </ul>
+                <p><strong>Next Steps:</strong></p>
+                <ul>
+                    <li>Review findings from OpenSanctions and Offshore Leaks for risk exposure.</li>
+                    <li>Cross-check Google results for any adverse media mentions.</li>
+                    <li>If red flags are found, conduct Enhanced Due Diligence (EDD).</li>
+                    <li>Consider regulatory reporting obligations based on findings.</li>
+                </ul>
+            `;
+            document.getElementById("report").innerHTML = report;
+            document.getElementById("report").style.display = "block";
+        }
+    </script>
+</body>
+</html>
