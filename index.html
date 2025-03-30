@@ -3,76 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSINT Compliance Investigation Tool</title>
+    <title>OSINT Adverse Media Search</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: auto;
             text-align: center;
-            margin: 50px;
         }
         input, button {
+            margin: 10px 0;
             padding: 10px;
-            margin: 10px;
-            font-size: 16px;
+            width: 90%;
         }
-        .report {
+        #results {
             margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-            display: none;
             text-align: left;
         }
     </style>
 </head>
 <body>
-    <h2>OSINT Compliance Investigation Tool</h2>
-    <p>Enter the name of a subject to search for adverse media and compliance risks.</p>
+    <div class="container">
+        <h2>OSINT Adverse Media Search</h2>
+        <input type="text" id="nameInput" placeholder="Enter name">
+        <button onclick="performSearch()">Search</button>
+        <div id="results"></div>
+    </div>
     
-    <input type="text" id="subjectName" placeholder="Enter full name">
-    <button onclick="performSearch()">Search</button>
-
-    <div id="report" class="report"></div>
-
     <script>
         function performSearch() {
-            let name = document.getElementById("subjectName").value.trim();
-            if (name === "") {
+            let name = document.getElementById("nameInput").value;
+            if (!name) {
                 alert("Please enter a name.");
                 return;
             }
-
-            // Open multiple OSINT sources for investigation
-            let googleSearch = `https://www.google.com/search?q=${name}+fraud+OR+"money+laundering"+OR+scandal+OR+"criminal+charges"`;
-            let openSanctions = `https://www.opensanctions.org/search/?q=${name}`;
-            let offshoreLeaks = `https://offshoreleaks.icij.org/search?q=${name}`;
-            let northData = `https://www.northdata.com/${name.replace(" ", "+")}`;
-
-            window.open(googleSearch, "_blank");
-            window.open(openSanctions, "_blank");
-            window.open(offshoreLeaks, "_blank");
-            window.open(northData, "_blank");
-
-            // Generate Report
-            let report = `
-                <h3>Investigation Report for ${name}</h3>
-                <p><strong>Sources Checked:</strong></p>
-                <ul>
-                    <li>Google Adverse Media Search</li>
-                    <li>OpenSanctions Database</li>
-                    <li>Offshore Leaks Database</li>
-                    <li>North Data (Company Information)</li>
-                </ul>
-                <p><strong>Next Steps:</strong></p>
-                <ul>
-                    <li>Review findings from OpenSanctions and Offshore Leaks for risk exposure.</li>
-                    <li>Cross-check Google results for any adverse media mentions.</li>
-                    <li>If red flags are found, conduct Enhanced Due Diligence (EDD).</li>
-                    <li>Consider regulatory reporting obligations based on findings.</li>
-                </ul>
-            `;
-            document.getElementById("report").innerHTML = report;
-            document.getElementById("report").style.display = "block";
+            let searchQueries = [
+                `https://www.opensanctions.org/search/?q=${encodeURIComponent(name)}`,
+                `https://offshoreleaks.icij.org/search?q=${encodeURIComponent(name)}`,
+                `https://www.northdata.com/${encodeURIComponent(name)}`,
+                `https://www.google.com/search?q=${encodeURIComponent(name)}+fraud+OR+money+laundering+OR+sanctions`
+            ];
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "<h3>Search Results:</h3>";
+            searchQueries.forEach(url => {
+                resultsDiv.innerHTML += `<p><a href="${url}" target="_blank">${url}</a></p>`;
+            });
         }
     </script>
 </body>
